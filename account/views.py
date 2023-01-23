@@ -36,7 +36,7 @@ def signup(request):
             messages.info('Passwords do not match')
 
     else:
-        return render(request, 'register.html')
+        return render(request, 'user/register.html')
 
 def login(request):
     if request.method == 'POST':
@@ -52,12 +52,12 @@ def login(request):
             messages.info(request, 'Invalid Credentials')
             return redirect('login')
     else:
-        return render(request, 'login.html')
+        return render(request, 'user/login.html')
 
 def home(request):
-    return render(request, 'home.html')
+    return render(request, 'account/home.html')
 
 class CreateTransactionView(CreateView):
     model = Transactions
-    fields = ['receiver_id', 'amount', 'payment_method']
-    template_name = 'add_transaction.html'
+    fields = ['receiver', 'amount', 'payment_method']
+    template_name = 'transactions/add_transaction.html'

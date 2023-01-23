@@ -1,2 +1,3 @@
 Django
 django-phonenumber-field
+django-crispy-forms

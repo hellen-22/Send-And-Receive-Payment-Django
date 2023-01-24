@@ -32,7 +32,7 @@ def signup(request):
                 user = User.objects.create_user(first_name=first_name, last_name=last_name, username=username, email=email, phone_number=phone_number, password=password)
                 user.save()
 
-                return redirect('home')
+                return redirect('login')
         else:
             messages.info('Passwords do not match')
 

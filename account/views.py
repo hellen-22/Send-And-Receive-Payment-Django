@@ -1,9 +1,10 @@
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from django.contrib.auth.models import auth
+from django.contrib.auth import login as user_login, authenticate
 from django.views.generic import CreateView
 
 from .models import *
+from .forms import *
 
 # Create your views here.
 def signup(request):
@@ -39,20 +40,25 @@ def signup(request):
         return render(request, 'user/register.html')
 
 def login(request):
-    if request.method == 'POST':
-        email = request.POST['email']
-        password = request.POST['password']
+    form = LogInForm(request.POST or None)
 
-        user = auth.authenticate(email=email, password=password)
+    msg = None
 
-        if user is not None:
-            auth.login(request, user)
-
+    if request.method == "POST":
+        if form.is_valid():
+            email = form.cleaned_data.get("email")
+            password = form.cleaned_data.get("password")
+            user = authenticate(email=email, password=password)
+            if user is not None:
+                user_login(request, user)
+                return redirect("/")
+            else:
+                messages.error(request, "Invalid Credentials, Try Again")
         else:
-            messages.info(request, 'Invalid Credentials')
-            return redirect('login')
-    else:
-        return render(request, 'user/login.html')
+            messages.error(request, "Error Valid Details, Try Again")
+
+    return render(request, "user/login.html", {"form": form, "msg": msg})
+
 
 def home(request):
     return render(request, 'account/home.html')

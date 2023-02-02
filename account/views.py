@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login as user_login, authenticate
 from django.views.generic import CreateView
+from django.contrib.auth.forms import AuthenticationForm
 
 from .models import *
 from .forms import *
@@ -40,24 +41,27 @@ def signup(request):
         return render(request, 'user/register.html')
 
 def login(request):
-    form = LogInForm(request.POST or None)
-
-    msg = None
-
     if request.method == "POST":
+        form = LogInForm(request.POST or None)
+
         if form.is_valid():
-            email = form.cleaned_data.get("email")
-            password = form.cleaned_data.get("password")
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+
             user = authenticate(email=email, password=password)
+
             if user is not None:
                 user_login(request, user)
-                return redirect("/")
+                return redirect("home")
             else:
-                messages.error(request, "Invalid Credentials, Try Again")
-        else:
-            messages.error(request, "Error Valid Details, Try Again")
+                messages.error(request,"Invalid credentials. Try again")
 
-    return render(request, "user/login.html", {"form": form, "msg": msg})
+        else:
+            messages.error(request,"Invalid Details. Try again.")
+
+    form = LogInForm()
+
+    return render(request, "user/login.html", context={"login_form":form})
 
 
 def home(request):
